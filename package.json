@@ -1,6 +1,9 @@
 {
   "name": "woof",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=10.10.0"
+  },
   "description": "A community for neighborly dog sitting and boarding",
   "main": "index.js",
   "scripts": {
