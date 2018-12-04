@@ -43,8 +43,12 @@ class CommunityForm extends Component {
   async handleSubmit(e) {
     e.preventDefault();
     const signupInfo = { ...this.state };
+    signupInfo.firstName = signupInfo.firstName.charAt(0).toUpperCase()
+      + signupInfo.firstName.slice(1);
+    signupInfo.lastName = signupInfo.lastName.charAt(0).toUpperCase()
+      + signupInfo.lastName.slice(1);
+    signupInfo.email = signupInfo.email.toLowerCase();
     delete signupInfo.dogPicUrl;
-    console.log(this.state);
     try {
       const response = await fetch('/join', {
         method: 'POST',
@@ -53,24 +57,15 @@ class CommunityForm extends Component {
           'Content-Type': 'application/json',
         },
       });
+      if (!response.ok) {
+        throw new Error('Response was not ok!');
+      } else {
+        const nearbyUsers = await response.json();
+        this.props.handleSuccessfulJoin(signupInfo.email, signupInfo.zipCode, nearbyUsers);
+      }
     } catch (err) {
       console.log(err);
     }
-    this.setState({
-      firstName: '',
-      lastName: '',
-      streetAddress: '',
-      city: '',
-      state: '',
-      zipcode: '',
-      email: '',
-      dogName: '',
-      dogBreed: '',
-      dogWeight: '',
-      dogGender: '',
-      dogPic: null,
-      dogPicUrl: null,
-    });
   }
 
   render() {
@@ -132,7 +127,7 @@ class CommunityForm extends Component {
             <br/>
             <label>
               <span>Dog Weight(lbs):</span>
-              <input name="dogWeight" type="text" value={ this.state.dogWeight } onChange={ this.handleChange } required/>
+              <input name="dogWeight" type="number" value={ this.state.dogWeight } onChange={ this.handleChange } required/>
             </label>
             <fieldset>
               <legend>Gender</legend>
